@@ -1,0 +1,142 @@
+@import "variable.css";
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    font-family: var(--font-family);
+    display: flex;
+    background-color: var(--background-color);
+    background-image: radial-gradient(var(--background-dot-color) 1px, transparent 1px);
+    background-size: var(--background-size);
+}
+
+/* Left side – login form */
+.left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(6px);
+    box-shadow: var(--box-shadow);
+}
+
+.login-box {
+    width: 100%;
+    max-width: 380px;
+}
+
+.login-box h1 {
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    color: var(--text-color);
+    font-weight: 600;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: var(--label-color);
+    font-size: 0.9rem;
+}
+
+input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: var(--transition-border);
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: var(--input-focus-shadow);
+}
+
+button {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.9rem;
+    border: none;
+    border-radius: var(--border-radius);
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-button);
+}
+
+button:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.footer-text {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.footer-text a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.footer-text a:hover {
+    text-decoration: underline;
+}
+
+/* Right side – brand panel */
+.right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: url(https://images.unsplash.com/photo-1556997685-309989c1aa82?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1473);
+    background-position: center;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.brand {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+.brand h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.brand p {
+    font-size: 1rem;
+    opacity: 0.85;
+}
+
+@media (max-width: 800px) {
+    body {
+        flex-direction: column;
+    }
+    
+    .right {
+        height: 200px;
+        flex: none;
+    }
+}

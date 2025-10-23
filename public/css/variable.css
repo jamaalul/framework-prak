@@ -1,0 +1,18 @@
+:root {
+  --font-family: "Inter", system-ui, sans-serif;
+  --background-color: #fafafa;
+  --background-dot-color: #dedede;
+  --background-size: 20px 20px;
+  --primary-color: #ff2d20;
+  --primary-hover: #e0261b;
+  --secondary-color: #ff5b3c;
+  --text-color: #1f1f1f;
+  --text-muted: #666;
+  --label-color: #444;
+  --border-color: #ccc;
+  --border-radius: 0.6rem;
+  --input-focus-shadow: 0 0 0 3px rgba(255, 45, 32, 0.15);
+  --box-shadow: 0 0 30px rgba(0, 0, 0, 0.05);
+  --transition-border: border-color 0.2s, box-shadow 0.2s;
+  --transition-button: background-color 0.2s, transform 0.1s;
+}
