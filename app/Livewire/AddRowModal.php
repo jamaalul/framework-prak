@@ -52,13 +52,13 @@ class AddRowModal extends Component
         $methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
 
         foreach ($methods as $method) {
-            if ($method->class === get_class($instance) && !$method->isStatic()) {
+            if ($method->class === get_class($instance) && !$method->isStatic() && $method->getNumberOfParameters() === 0) {
                 try {
                     $relation = $instance->{$method->getName()}();
                     if ($relation instanceof \Illuminate\Database\Eloquent\Relations\BelongsToMany) {
                         $manyToManyRelationships[] = $method->getName();
                     }
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     // Skip if method is not a relationship
                 }
             }
