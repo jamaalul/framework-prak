@@ -12,6 +12,52 @@ class AddRowModal extends Component
     public $relationships = [];
     public $manyToManyRelationships = [];
 
+    protected $validationRules = [
+        'App\Models\Pet' => [
+            'nama' => 'required|string|max:255',
+            'tanggal_lahir' => 'required|date',
+            'warna_tanda' => 'required|string|max:255',
+            'jenis_kelamin' => 'required|in:J,B',
+            'idpemilik' => 'required|exists:pemilik,idpemilik',
+            'idras_hewan' => 'required|exists:ras_hewan,idras_hewan',
+        ],
+        'App\Models\Pemilik' => [
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email|unique:pemilik,email',
+            'password' => 'required|string|min:8',
+            'no_wa' => 'required|string|max:20',
+            'alamat' => 'required|string|max:500',
+            'iduser' => 'required|exists:user,iduser',
+        ],
+        'App\Models\RasHewan' => [
+            'nama_ras' => 'required|string|max:255',
+            'idjenis_hewan' => 'required|exists:jenis_hewan,idjenis_hewan',
+        ],
+        'App\Models\JenisHewan' => [
+            'nama_jenis_hewan' => 'required|string|max:255',
+        ],
+        'App\Models\Kategori' => [
+            'nama_kategori' => 'required|string|max:255',
+        ],
+        'App\Models\KategoriKlinis' => [
+            'nama_kategori_klinis' => 'required|string|max:255',
+        ],
+        'App\Models\KodeTindakanTerapi' => [
+            'kode' => 'required|string|max:50|unique:kode_tindakan_terapi,kode',
+            'deskripsi_tindakan_terapi' => 'required|string|max:500',
+            'idkategori' => 'required|exists:kategori,idkategori',
+            'idkategori_klinis' => 'required|exists:kategori_klinis,idkategori_klinis',
+        ],
+        'App\Models\User' => [
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email|unique:user,email',
+            'password' => 'required|string|min:8',
+        ],
+        'App\Models\Role' => [
+            'nama_role' => 'required|string|max:255|unique:role,nama_role',
+        ],
+    ];
+
     public function mount($model)
     {
         $this->model = $model;
@@ -69,14 +115,11 @@ class AddRowModal extends Component
 
     public function save()
     {
-        $this->validate([
-            'formData.*' => 'required',
-        ]);
+        $this->validateFormData();
 
         $newRecord = new $this->model;
-        $newRecord->timestamps = false; // Disable timestamps
+        $newRecord->timestamps = false;
 
-        // Separate fillable data from many-to-many relationships
         $fillableData = [];
         $manyToManyData = [];
 
@@ -101,6 +144,23 @@ class AddRowModal extends Component
         $this->dispatch('rowAdded');
         $this->reset('formData');
         return redirect()->route('dashboard', ['model' => class_basename($this->model)]);
+    }
+
+    private function validateFormData()
+    {
+        $rules = [];
+        $modelClass = $this->model;
+
+        if (isset($this->validationRules[$modelClass])) {
+            foreach ($this->validationRules[$modelClass] as $field => $rule) {
+                $rules["formData.{$field}"] = $rule;
+            }
+        } else {
+            // Fallback to generic required validation if no specific rules defined
+            $rules['formData.*'] = 'required';
+        }
+
+        $this->validate($rules);
     }
 
     public function getRelatedModel($field)
