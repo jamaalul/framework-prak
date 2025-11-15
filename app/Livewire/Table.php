@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use \Illuminate\Support\Facades\DB;
 
 class Table extends Component
 {
@@ -16,38 +17,54 @@ class Table extends Component
         $this->model = $model;
         $this->relationships = $relationships;
 
-        $query = $model::query();
-        if (!empty($relationships)) {
-            $query->with($relationships);
-        }
-        $this->data = $query->get();
+        $instance = new $model;
+        $query = DB::table($instance->getTable());
 
-        // Add computed columns for relationships
-        $this->data = $this->data->map(function ($item) use ($relationships) {
-            foreach ($relationships as $relationship) {
-                if ($relationship === 'role') {
-                    $item->roles = $item->role->pluck('nama_role')->join("\n");
-                } elseif ($relationship === 'rasHewan') {
-                    if ($item->rasHewan instanceof \Illuminate\Database\Eloquent\Collection) {
-                        $item->ras_hewan = $item->rasHewan->pluck('nama_ras')->join("\n");
-                    } else {
-                        $item->ras_hewan = $item->rasHewan->nama_ras ?? '';
-                    }
-                } elseif ($relationship === 'jenisHewan') {
-                    $item->jenis_hewan = $item->jenisHewan->nama_jenis_hewan ?? '';
-                } elseif ($relationship === 'kategori') {
-                    $item->kategori = $item->kategori->nama_kategori ?? '';
-                } elseif ($relationship === 'kategoriKlinis') {
-                    $item->kategori_klinis = $item->kategoriKlinis->nama_kategori_klinis ?? '';
-                } elseif ($relationship === 'pemilik.user') {
-                    $item->pemilik = $item->pemilik->user->nama ?? '';
+        $selects = [$instance->getTable() . '.*'];
+
+        foreach ($relationships as $relationship) {
+            if ($relationship === 'role') {
+                // This is a many-to-many relationship, handled separately
+            } elseif ($relationship === 'rasHewan') {
+                if ($instance->getTable() === 'jenis_hewan') {
+                    $query->leftJoin('ras_hewan', 'ras_hewan.idjenis_hewan', '=', 'jenis_hewan.idjenis_hewan');
+                } else {
+                    $query->leftJoin('ras_hewan', $instance->getTable() . '.idras_hewan', '=', 'ras_hewan.idras_hewan');
                 }
+                $selects[] = 'ras_hewan.nama_ras as ras_hewan';
+            } elseif ($relationship === 'jenisHewan') {
+                $query->leftJoin('jenis_hewan', $instance->getTable() . '.idjenis_hewan', '=', 'jenis_hewan.idjenis_hewan');
+                $selects[] = 'jenis_hewan.nama_jenis_hewan as jenis_hewan';
+            } elseif ($relationship === 'kategori') {
+                $query->leftJoin('kategori', $instance->getTable() . '.idkategori', '=', 'kategori.idkategori');
+                $selects[] = 'kategori.nama_kategori as kategori';
+            } elseif ($relationship === 'kategoriKlinis') {
+                $query->leftJoin('kategori_klinis', $instance->getTable() . '.idkategori_klinis', '=', 'kategori_klinis.idkategori_klinis');
+                $selects[] = 'kategori_klinis.nama_kategori_klinis as kategori_klinis';
+            } elseif ($relationship === 'pemilik.user') {
+                $query->leftJoin('pemilik', $instance->getTable() . '.idpemilik', '=', 'pemilik.idpemilik')
+                    ->leftJoin('user', 'pemilik.iduser', '=', 'user.iduser');
+                $selects[] = 'user.nama as pemilik';
             }
-            return $item;
-        });
+        }
+
+        $this->data = $query->select($selects)->get();
+
+        // Handle many-to-many relationship for roles
+        if (in_array('role', $relationships)) {
+            $this->data->map(function ($item) use ($instance) {
+                $item->roles = \Illuminate\Support\Facades\DB::table('role_user')
+                    ->join('role', 'role_user.idrole', '=', 'role.idrole')
+                    ->where('role_user.iduser', $item->{$instance->getKeyName()})
+                    ->pluck('nama_role')
+                    ->join("\n");
+                return $item;
+            });
+        }
+
 
         if ($columns === null) {
-            $this->columns = $this->data->first() ? $this->data->first()->getFillable() : [];
+            $this->columns = $this->data->first() ? array_keys((array) $this->data->first()) : [];
         } else {
             $this->columns = $columns;
         }
