@@ -31,7 +31,7 @@
         @if ($errors)
           <div class="mb-4">
             @foreach ($errors->all() as $error)
-              <flux:error>{{ $error }}</flux:error>
+              <p class="text-red-500">{{ $error }}</p>
             @endforeach
           </div>
         @endif
