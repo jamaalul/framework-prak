@@ -10,4 +10,5 @@
 
 @livewire('table', ['model' => $model, 'relationships' => $relationships, 'columns' => $columns])
 @livewire('add-row-modal', ['model' => $model])
+@livewire('edit-row-modal', ['model' => $model])
 @endsection

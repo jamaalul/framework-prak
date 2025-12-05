@@ -40,6 +40,26 @@ class DashboardController extends Controller
                 $relationships = ['pemilik.user', 'rasHewan'];
                 $columns = ['nama', 'tanggal_lahir', 'warna_tanda', 'jenis_kelamin', 'pemilik', 'ras_hewan'];
                 break;
+            case 'Pemilik':
+                $relationships = ['user'];
+                $columns = ['email', 'no_wa', 'alamat', 'user'];
+                break;
+            case 'RekamMedis':
+                $relationships = ['pet'];
+                $columns = ['created_at', 'pet', 'anamnesa', 'diagnosa'];
+                break;
+            case 'TemuDokter':
+                $relationships = ['pet'];
+                $columns = ['no_urut', 'waktu_daftar', 'pet', 'status'];
+                break;
+            case 'Perawat':
+                $relationships = ['user'];
+                $columns = ['user', 'alamat', 'no_hp', 'jenis_kelamin', 'pendidikan'];
+                break;
+            case 'Dokter':
+                $relationships = ['user'];
+                $columns = ['user', 'alamat', 'no_hp', 'jenis_kelamin', 'bidang_dokter'];
+                break;
             default:
                 $columns = (new $modelClass)->getFillable();
                 break;

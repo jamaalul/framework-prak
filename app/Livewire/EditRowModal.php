@@ -4,13 +4,15 @@ namespace App\Livewire;
 
 use Livewire\Component;
 
-class AddRowModal extends Component
+class EditRowModal extends Component
 {
     public $model;
+    public $recordId;
     public $fillable = [];
     public $formData = [];
     public $relationships = [];
     public $manyToManyRelationships = [];
+    public $record;
 
     protected $validationRules = [
         'App\Models\Pet' => [
@@ -23,8 +25,7 @@ class AddRowModal extends Component
         ],
         'App\Models\Pemilik' => [
             'nama' => 'required|string|max:255',
-            'email' => 'required|email|unique:pemilik,email',
-            'password' => 'required|string|min:8',
+            'email' => 'required|email',
             'no_wa' => 'required|string|max:20',
             'alamat' => 'required|string|max:500',
             'iduser' => 'required|exists:user,iduser',
@@ -43,18 +44,17 @@ class AddRowModal extends Component
             'nama_kategori_klinis' => 'required|string|max:255',
         ],
         'App\Models\KodeTindakanTerapi' => [
-            'kode' => 'required|string|max:50|unique:kode_tindakan_terapi,kode',
+            'kode' => 'required|string|max:50',
             'deskripsi_tindakan_terapi' => 'required|string|max:500',
             'idkategori' => 'required|exists:kategori,idkategori',
             'idkategori_klinis' => 'required|exists:kategori_klinis,idkategori_klinis',
         ],
         'App\Models\User' => [
             'nama' => 'required|string|max:255',
-            'email' => 'required|email|unique:user,email',
-            'password' => 'required|string|min:8',
+            'email' => 'required|email',
         ],
         'App\Models\Role' => [
-            'nama_role' => 'required|string|max:255|unique:role,nama_role',
+            'nama_role' => 'required|string|max:255',
         ],
         'App\Models\RekamMedis' => [
             'anamnesa' => 'required|string|max:1000',
@@ -84,6 +84,8 @@ class AddRowModal extends Component
         ],
     ];
 
+    protected $listeners = ['editRecord'];
+
     public function mount($model)
     {
         $this->model = $model;
@@ -91,18 +93,44 @@ class AddRowModal extends Component
         $this->fillable = $instance->getFillable();
         $this->relationships = $this->getRelationships($instance);
         $this->manyToManyRelationships = $this->getManyToManyRelationships($instance);
-        foreach ($this->fillable as $field) {
-            $this->formData[$field] = '';
-        }
-        foreach ($this->manyToManyRelationships as $relationship) {
-            $this->formData[$relationship] = [];
-        }
-        
-        // Initialize details array for RekamMedis
-        if (class_basename($model) === 'RekamMedis') {
-            $this->formData['details'] = [];
+    }
+
+    public function editRecord($id)
+    {
+        $this->recordId = $id;
+        $this->record = $this->model::find($id);
+
+        if ($this->record) {
+            // Populate form data with existing record values
+            foreach ($this->fillable as $field) {
+                $this->formData[$field] = $this->record->$field ?? '';
+            }
+
+            // Populate many-to-many relationships
+            foreach ($this->manyToManyRelationships as $relationship) {
+                $relation = $this->record->$relationship();
+                $relatedModel = $relation->getRelated();
+                $relatedTable = $relatedModel->getTable();
+                $relatedKey = $relatedModel->getKeyName();
+                
+                // Qualify the column name with table name to avoid ambiguity
+                $this->formData[$relationship] = $relation->pluck($relatedTable . '.' . $relatedKey)->toArray();
+            }
+            
+            // Load detail_rekam_medis for RekamMedis model
+            if (class_basename($this->model) === 'RekamMedis') {
+                $details = \App\Models\DetailRekamMedis::where('idrekam_medis', $id)->get();
+                $this->formData['details'] = $details->map(function($detail) {
+                    return [
+                        'id' => $detail->iddetail_rekam_medis,
+                        'idkode_tindakan_terapi' => $detail->idkode_tindakan_terapi,
+                        'detail' => $detail->detail,
+                    ];
+                })->toArray();
+            }
         }
     }
+
 
     private function getRelationships($instance)
     {
@@ -144,64 +172,61 @@ class AddRowModal extends Component
         return $manyToManyRelationships;
     }
 
-    public function save()
+    public function update()
     {
         $this->validateFormData();
 
-        $newRecord = new $this->model;
-        $newRecord->timestamps = false;
+        $record = $this->model::find($this->recordId);
 
-        $fillableData = [];
-        $manyToManyData = [];
+        if ($record) {
+            $record->timestamps = false;
 
-        foreach ($this->formData as $key => $value) {
-            if (in_array($key, $this->fillable)) {
-                $fillableData[$key] = $value;
-            } elseif (in_array($key, $this->manyToManyRelationships)) {
-                $manyToManyData[$key] = $value;
-            }
-        }
+            $fillableData = [];
+            $manyToManyData = [];
 
-        $newRecord->fill($fillableData);
-        
-        // Auto-generate fields for TemuDokter
-        if (class_basename($this->model) === 'TemuDokter') {
-            $lastNoUrut = \App\Models\TemuDokter::max('no_urut') ?? 0;
-            $newRecord->no_urut = $lastNoUrut + 1;
-            $newRecord->waktu_daftar = now();
-            $newRecord->idrole_user = null;
-        }
-        
-        // Auto-generate created_at for RekamMedis
-        if (class_basename($this->model) === 'RekamMedis') {
-            $newRecord->created_at = now();
-        }
-        
-        $newRecord->save();
-
-        // Handle many-to-many relationships
-        foreach ($manyToManyData as $relationship => $ids) {
-            if (!empty($ids)) {
-                $newRecord->{$relationship}()->attach($ids);
-            }
-        }
-        
-        // Handle detail_rekam_medis for RekamMedis model
-        if (class_basename($this->model) === 'RekamMedis' && isset($this->formData['details'])) {
-            foreach ($this->formData['details'] as $detail) {
-                if (!empty($detail['idkode_tindakan_terapi'])) {
-                    \App\Models\DetailRekamMedis::create([
-                        'idrekam_medis' => $newRecord->idrekam_medis,
-                        'idkode_tindakan_terapi' => $detail['idkode_tindakan_terapi'],
-                        'detail' => $detail['detail'] ?? '',
-                    ]);
+            foreach ($this->formData as $key => $value) {
+                if (in_array($key, $this->fillable)) {
+                    $fillableData[$key] = $value;
+                } elseif (in_array($key, $this->manyToManyRelationships)) {
+                    $manyToManyData[$key] = $value;
                 }
             }
-        }
 
-        $this->dispatch('rowAdded');
-        $this->reset('formData');
-        return redirect()->route('dashboard', ['model' => class_basename($this->model)]);
+            $record->fill($fillableData);
+            
+            // Handle TemuDokter specific fields
+            if (class_basename($this->model) === 'TemuDokter') {
+                $record->idrole_user = null;
+            }
+            
+            $record->save();
+
+            // Handle many-to-many relationships
+            foreach ($manyToManyData as $relationship => $ids) {
+                $record->{$relationship}()->sync($ids);
+            }
+            
+            // Handle detail_rekam_medis for RekamMedis model
+            if (class_basename($this->model) === 'RekamMedis' && isset($this->formData['details'])) {
+                // Delete existing details
+                \App\Models\DetailRekamMedis::where('idrekam_medis', $this->recordId)->delete();
+                
+                // Create new details
+                foreach ($this->formData['details'] as $detail) {
+                    if (!empty($detail['idkode_tindakan_terapi'])) {
+                        \App\Models\DetailRekamMedis::create([
+                            'idrekam_medis' => $this->recordId,
+                            'idkode_tindakan_terapi' => $detail['idkode_tindakan_terapi'],
+                            'detail' => $detail['detail'] ?? '',
+                        ]);
+                    }
+                }
+            }
+
+            $this->dispatch('recordUpdated');
+            $this->reset(['formData', 'recordId', 'record']);
+            return redirect()->route('dashboard', ['model' => class_basename($this->model)]);
+        }
     }
     
     public function addDetail()
@@ -225,6 +250,16 @@ class AddRowModal extends Component
 
         if (isset($this->validationRules[$modelClass])) {
             foreach ($this->validationRules[$modelClass] as $field => $rule) {
+                // Handle unique validation for edits - exclude current record
+                if (is_string($rule) && str_contains($rule, 'unique:')) {
+                    $rule = $rule . ',' . $this->recordId;
+                } elseif (is_string($rule) && str_contains($rule, 'email')) {
+                    // For email, add unique rule with exception for current record
+                    $instance = new $modelClass;
+                    $table = $instance->getTable();
+                    $primaryKey = $instance->getKeyName();
+                    $rule = $rule . '|unique:' . $table . ',' . $field . ',' . $this->recordId . ',' . $primaryKey;
+                }
                 $rules["formData.{$field}"] = $rule;
             }
         } else {
@@ -282,6 +317,6 @@ class AddRowModal extends Component
 
     public function render()
     {
-        return view('livewire.add-row-modal');
+        return view('livewire.edit-row-modal');
     }
 }

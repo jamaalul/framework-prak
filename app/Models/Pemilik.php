@@ -13,9 +13,6 @@ class Pemilik extends User
     protected $primaryKey = 'idpemilik';
 
     protected $fillable = [
-        'nama',
-        'email',
-        'password',
         'no_wa',
         'alamat',
         'iduser',

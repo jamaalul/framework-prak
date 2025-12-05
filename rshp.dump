@@ -80,7 +80,7 @@ CREATE TABLE `detail_rekam_medis` (
   KEY `idkode_tindakan_terapi` (`idkode_tindakan_terapi`),
   CONSTRAINT `detail_rekam_medis_ibfk_1` FOREIGN KEY (`idkode_tindakan_terapi`) REFERENCES `kode_tindakan_terapi` (`idkode_tindakan_terapi`),
   CONSTRAINT `fk_detail_rekam_medis_rekam_medis1` FOREIGN KEY (`idrekam_medis`) REFERENCES `rekam_medis` (`idrekam_medis`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -89,7 +89,38 @@ CREATE TABLE `detail_rekam_medis` (
 
 LOCK TABLES `detail_rekam_medis` WRITE;
 /*!40000 ALTER TABLE `detail_rekam_medis` DISABLE KEYS */;
+INSERT INTO `detail_rekam_medis` VALUES (1,5,1,'mati dia wak');
 /*!40000 ALTER TABLE `detail_rekam_medis` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `dokter`
+--
+
+DROP TABLE IF EXISTS `dokter`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `dokter` (
+  `id_dokter` int NOT NULL AUTO_INCREMENT,
+  `alamat` varchar(100) DEFAULT NULL,
+  `no_hp` varchar(45) DEFAULT NULL,
+  `bidang_dokter` varchar(100) DEFAULT NULL,
+  `jenis_kelamin` varchar(1) DEFAULT NULL,
+  `id_user` bigint DEFAULT NULL,
+  PRIMARY KEY (`id_dokter`),
+  KEY `id_user` (`id_user`),
+  CONSTRAINT `dokter_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `user` (`iduser`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `dokter`
+--
+
+LOCK TABLES `dokter` WRITE;
+/*!40000 ALTER TABLE `dokter` DISABLE KEYS */;
+INSERT INTO `dokter` VALUES (1,'Sana','0903918301303','Sakit','L',16);
+/*!40000 ALTER TABLE `dokter` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -141,7 +172,7 @@ CREATE TABLE `jenis_hewan` (
 
 LOCK TABLES `jenis_hewan` WRITE;
 /*!40000 ALTER TABLE `jenis_hewan` DISABLE KEYS */;
-INSERT INTO `jenis_hewan` VALUES (1,'Anjing (Canis lupus familiaris)'),(2,'Kucing (Felis catus)'),(3,'Kelinci (Oryctolagus cuniculus)'),(4,'Burung'),(5,'Reptil'),(7,'kadal madura'),(8,'kadal arab');
+INSERT INTO `jenis_hewan` VALUES (1,'Anjing (Canis lupus familiaris)'),(2,'Kucing (Felis catus)'),(3,'Kelinci (Oryctolagus cuniculus)'),(4,'Burung'),(5,'Reptil');
 /*!40000 ALTER TABLE `jenis_hewan` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -338,6 +369,36 @@ INSERT INTO `pemilik` VALUES (5,'088989406047','Rt. 2/Rw. 2, Drajat, Paciran, La
 UNLOCK TABLES;
 
 --
+-- Table structure for table `perawat`
+--
+
+DROP TABLE IF EXISTS `perawat`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `perawat` (
+  `id_perawat` int NOT NULL AUTO_INCREMENT,
+  `alamat` varchar(100) DEFAULT NULL,
+  `no_hp` varchar(45) DEFAULT NULL,
+  `jenis_kelamin` varchar(1) DEFAULT NULL,
+  `pendidikan` varchar(100) DEFAULT NULL,
+  `id_user` bigint DEFAULT NULL,
+  PRIMARY KEY (`id_perawat`),
+  KEY `id_user` (`id_user`),
+  CONSTRAINT `perawat_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `user` (`iduser`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `perawat`
+--
+
+LOCK TABLES `perawat` WRITE;
+/*!40000 ALTER TABLE `perawat` DISABLE KEYS */;
+INSERT INTO `perawat` VALUES (1,'sini','09200380931','L','SMA',20);
+/*!40000 ALTER TABLE `perawat` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `pet`
 --
 
@@ -393,7 +454,7 @@ CREATE TABLE `ras_hewan` (
 
 LOCK TABLES `ras_hewan` WRITE;
 /*!40000 ALTER TABLE `ras_hewan` DISABLE KEYS */;
-INSERT INTO `ras_hewan` VALUES (1,'Golden Retriever',1),(2,'Labrador Retriever',1),(3,'German Shepherd',1),(4,'Bulldog (English, French)',1),(5,'Poodle (Toy, Miniature, Standard)',1),(6,'Beagle',1),(7,'Siberian Husky',1),(8,'Shih Tzu',1),(9,'Dachshund',1),(10,'Chihuahua',1),(11,'Persia',2),(12,'Maine Coon',2),(13,'Siamese',2),(14,'Bengal',2),(15,'Sphynx',2),(16,'Scottish Fold',2),(17,'British Shorthair',2),(18,'Anggora',2),(19,'Domestic Shorthair (kampung)',2),(20,'Ragdoll',2),(21,'Holland Lop',3),(22,'Netherland Dwarf',3),(23,'Flemish Giant',3),(24,'Lionhead',3),(25,'Rex',3),(26,'Angora Rabbit',3),(27,'Mini Lop',3),(28,'Lovebird (Agapornis sp.)',4),(29,'Kakatua (Cockatoo)',4),(30,'Parrot / Nuri (Macaw, African Grey, Amazon Parrot)',4),(31,'Kenari (Serinus canaria)',4),(32,'Merpati (Columba livia)',4),(33,'Parkit (Budgerigar / Melopsittacus undulatus)',4),(34,'Jalak (Sturnus sp.)',4),(35,'Kura-kura Sulcata (African spurred tortoise)',5),(36,'Red-Eared Slider (Trachemys scripta elegans)',5),(37,'Leopard Gecko',5),(38,'Iguana hijau',5),(39,'Ball Python',5),(40,'Corn Snake',5),(45,'anjay',1),(46,'oscar',7);
+INSERT INTO `ras_hewan` VALUES (1,'Golden Retriever',1),(2,'Labrador Retriever',1),(3,'German Shepherd',1),(4,'Bulldog (English, French)',1),(5,'Poodle (Toy, Miniature, Standard)',1),(6,'Beagle',1),(7,'Siberian Husky',1),(8,'Shih Tzu',1),(9,'Dachshund',1),(10,'Chihuahua',1),(11,'Persia',2),(12,'Maine Coon',2),(13,'Siamese',2),(14,'Bengal',2),(15,'Sphynx',2),(16,'Scottish Fold',2),(17,'British Shorthair',2),(18,'Anggora',2),(19,'Domestic Shorthair (kampung)',2),(20,'Ragdoll',2),(21,'Holland Lop',3),(22,'Netherland Dwarf',3),(23,'Flemish Giant',3),(24,'Lionhead',3),(25,'Rex',3),(26,'Angora Rabbit',3),(27,'Mini Lop',3),(28,'Lovebird (Agapornis sp.)',4),(29,'Kakatua (Cockatoo)',4),(30,'Parrot / Nuri (Macaw, African Grey, Amazon Parrot)',4),(31,'Kenari (Serinus canaria)',4),(32,'Merpati (Columba livia)',4),(33,'Parkit (Budgerigar / Melopsittacus undulatus)',4),(34,'Jalak (Sturnus sp.)',4),(35,'Kura-kura Sulcata (African spurred tortoise)',5),(36,'Red-Eared Slider (Trachemys scripta elegans)',5),(37,'Leopard Gecko',5),(38,'Iguana hijau',5),(39,'Ball Python',5),(40,'Corn Snake',5);
 /*!40000 ALTER TABLE `ras_hewan` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -453,7 +514,7 @@ CREATE TABLE `role` (
 
 LOCK TABLES `role` WRITE;
 /*!40000 ALTER TABLE `role` DISABLE KEYS */;
-INSERT INTO `role` VALUES (1,'Administrator'),(2,'Dokter'),(3,'Perawat'),(4,'Resepsionis'),(8,'Tamu');
+INSERT INTO `role` VALUES (1,'Administrator'),(2,'Dokter'),(3,'Perawat'),(4,'Resepsionis');
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -474,7 +535,7 @@ CREATE TABLE `role_user` (
   KEY `fk_role_user_role1_idx` (`idrole`),
   CONSTRAINT `fk_role_user_role1` FOREIGN KEY (`idrole`) REFERENCES `role` (`idrole`),
   CONSTRAINT `fk_role_user_user` FOREIGN KEY (`iduser`) REFERENCES `user` (`iduser`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -483,7 +544,7 @@ CREATE TABLE `role_user` (
 
 LOCK TABLES `role_user` WRITE;
 /*!40000 ALTER TABLE `role_user` DISABLE KEYS */;
-INSERT INTO `role_user` VALUES (2,6,1,1),(3,6,2,0),(25,9,1,1),(26,9,3,1),(27,9,4,1),(36,8,4,1),(40,6,3,1),(41,16,1,1),(43,21,1,1),(44,21,2,1),(45,21,3,1),(46,21,4,1),(47,22,8,1);
+INSERT INTO `role_user` VALUES (2,6,1,1),(3,6,2,0),(25,9,1,1),(26,9,3,1),(27,9,4,1),(36,8,4,1),(40,6,3,1),(41,16,1,1),(48,20,1,1),(49,20,2,1),(50,20,3,1),(51,18,4,1),(52,22,2,1);
 /*!40000 ALTER TABLE `role_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -513,7 +574,7 @@ CREATE TABLE `sessions` (
 
 LOCK TABLES `sessions` WRITE;
 /*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
-INSERT INTO `sessions` VALUES ('hhQoA9IrMtklki5tirvb5kLoByZ2T8LugfdoElmx',6,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0','YTo0OntzOjY6Il90b2tlbiI7czo0MDoiRUFjSEpxc1BncDVvaG02YnBKUDgwaWloWGNIOVhjWERUalpvakRhdyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly9mcmFtZXdvcmtfcHJhay50ZXN0L2Rhc2hib2FyZCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjY7fQ==',1763194158);
+INSERT INTO `sessions` VALUES ('HMpaKLSCuFGVQeGKKIlvWM4u1uYi2117ELGLL7gX',6,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0','YTo0OntzOjY6Il90b2tlbiI7czo0MDoiMWFSeXIzM09VT2MwTGx4NTdZc3FIZ2t1aGIxNlI4czlBcVZ0cWRWcCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDk6Imh0dHA6Ly9mcmFtZXdvcmtfcHJhay50ZXN0L2Rhc2hib2FyZD9tb2RlbD1Eb2t0ZXIiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTo2O30=',1764939103),('SWWiJ7A5rt3EIBJZpssHWiXR9D5drNfHdnp0GmsO',6,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36','YTo1OntzOjY6Il90b2tlbiI7czo0MDoiSmYyZ3pzYlh6MmtZekJOQXJONjRUcFpzNXIxbG1YSzA0Z2I0TU8waCI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjUwOiJodHRwOi8vZnJhbWV3b3JrX3ByYWsudGVzdC9kYXNoYm9hcmQ/bW9kZWw9UGVyYXdhdCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjY7fQ==',1764939181);
 /*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -530,13 +591,13 @@ CREATE TABLE `temu_dokter` (
   `waktu_daftar` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `status` char(1) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `idpet` int NOT NULL,
-  `idrole_user` int NOT NULL,
+  `idrole_user` int DEFAULT NULL,
   PRIMARY KEY (`idreservasi_dokter`),
   KEY `fk_temu_dokter_pet1_idx` (`idpet`),
   KEY `fk_temu_dokter_role_user1_idx` (`idrole_user`),
   CONSTRAINT `fk_temu_dokter_pet1` FOREIGN KEY (`idpet`) REFERENCES `pet` (`idpet`) ON DELETE CASCADE,
   CONSTRAINT `fk_temu_dokter_role_user1` FOREIGN KEY (`idrole_user`) REFERENCES `role_user` (`idrole_user`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -545,7 +606,7 @@ CREATE TABLE `temu_dokter` (
 
 LOCK TABLES `temu_dokter` WRITE;
 /*!40000 ALTER TABLE `temu_dokter` DISABLE KEYS */;
-INSERT INTO `temu_dokter` VALUES (7,1,'2025-10-03 21:22:37','0',5,3),(8,1,'2025-10-06 20:26:23','1',5,3);
+INSERT INTO `temu_dokter` VALUES (7,1,'2025-10-03 21:22:37','1',5,3),(9,2,'2025-12-05 04:43:53','1',7,NULL);
 /*!40000 ALTER TABLE `temu_dokter` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -572,7 +633,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (6,'admin','admin@mail.com','$2y$12$cWiHe3iFvLVD361qN/JDgehOc66d4fAcj8pV/4jQPKoCfgQwY2EWq'),(8,'helli','a.jamaalul@gmail.com','$2y$12$QoEiAN/9C6JkuOoxPZIowe4uQedqJvPLDtV0aY78AEZ1Wyq9C6Jsu'),(9,'saya','saya@gmail.com','$2y$12$onrkmCW4wEJpyKj/tGcQVe6lMPaRXnVgPeVw6Mve2dwiUjYZX5dJe'),(16,'fufufafa','ff@gmail.com','$2y$12$2ZSOKlX4jQ1fs00dNudx/uX.TG0qxpt.sVMEWvS6ets44jI04i6VO'),(18,'humongous_fixing','hum@gmail.com','$2y$12$EuOBWmNsR2gOw4jTXkyY7.IbkGpNmHVTtabGpZE9nXeh5.kBA3LTe'),(20,'jbjbjbj','kknkn@mail.com','$2y$12$BaxYLy4fdRaDqB2yHJGnxej9S499FGk6g6aRM62x6pIGAyRy79wU6'),(21,'bagul','bagul@mail.com','$2y$12$Mk2K/ssPJCX9CYzM1uqT4ubcnyif6/OV7vO.BxJlP6r5AV3MzepTm'),(22,'SayaSendiri','sendiri@mail.com','$2y$12$eMfKAahFBeHa39f1P9L0CuCWFP8fUCwDf.eopcU9ogsftHDTs0uve');
+INSERT INTO `user` VALUES (6,'admin','admin@mail.com','$2y$12$cWiHe3iFvLVD361qN/JDgehOc66d4fAcj8pV/4jQPKoCfgQwY2EWq'),(8,'helli','a.jamaalul@gmail.com','$2y$12$QoEiAN/9C6JkuOoxPZIowe4uQedqJvPLDtV0aY78AEZ1Wyq9C6Jsu'),(9,'saya','saya@gmail.com','$2y$12$onrkmCW4wEJpyKj/tGcQVe6lMPaRXnVgPeVw6Mve2dwiUjYZX5dJe'),(16,'fufufafa','ff@gmail.com','$2y$12$2ZSOKlX4jQ1fs00dNudx/uX.TG0qxpt.sVMEWvS6ets44jI04i6VO'),(18,'humongous_fixing','hum@gmail.com','$2y$12$EuOBWmNsR2gOw4jTXkyY7.IbkGpNmHVTtabGpZE9nXeh5.kBA3LTe'),(20,'jbjbjbl','kknkn@mail.com','$2y$12$BaxYLy4fdRaDqB2yHJGnxej9S499FGk6g6aRM62x6pIGAyRy79wU6'),(22,'SayaSendiri','sendiri@mail.com','$2y$12$eMfKAahFBeHa39f1P9L0CuCWFP8fUCwDf.eopcU9ogsftHDTs0uve');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -589,4 +650,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-15 15:09:51
+-- Dump completed on 2025-12-05 19:53:46

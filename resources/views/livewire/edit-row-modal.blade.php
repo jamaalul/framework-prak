@@ -1,11 +1,11 @@
-<flux:modal name="create" class="w-full">
+<flux:modal name="edit" class="w-full overflow-x-hidden">
     <div class="space-y-6">
         <div>
-            <flux:heading size="lg">Tambah Data</flux:heading>
-            <flux:subheading>Tambah data baru ke dalam tabel.</flux:subheading>
+            <flux:heading size="lg">Edit Data</flux:heading>
+            <flux:subheading>Edit data yang sudah ada.</flux:subheading>
         </div>
 
-        <form wire:submit="save" class="space-y-6">
+        <form wire:submit="update" class="space-y-6">
             @foreach ($fillable as $field)
                 @if (in_array($field, [
                         'idpemilik',
@@ -81,9 +81,9 @@
                     <flux:label>{{ ucfirst(str_replace('_', ' ', $relationship)) }}</flux:label>
                     <div class="space-y-2">
                         @php
-                            $relatedModel = $this->getRelatedModelForManyToMany($relationship);
-                            $options = $relatedModel ? $relatedModel::all() : [];
-                        @endphp
+                                $relatedModel = $this->getRelatedModelForManyToMany($relationship);
+                                $options = $relatedModel ? $relatedModel::all() : [];
+                            @endphp
                         @foreach ($options as $option)
                             <label class="flex items-center">
                                 <input type="checkbox" wire:model="formData.{{ $relationship }}"
@@ -104,10 +104,10 @@
                 <div class="border-t border-zinc-200 dark:border-zinc-700 pt-4">
                     <flux:heading size="md" class="mb-3 mt-3">Detail Tindakan & Terapi</flux:heading>
                     
-                    <div class="space-y-2 mb-3">
+                    <div class="space-y-2 mb-3 mt-3">
                         @if(isset($formData['details']) && count($formData['details']) > 0)
                             @foreach($formData['details'] as $index => $detail)
-                                <div class="p-3 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-700 mt-3">
+                                <div class="p-3 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-700">
                                     <div class="flex justify-between items-start mb-2">
                                         <flux:subheading>Detail {{ $index + 1 }}</flux:subheading>
                                         <flux:button wire:click="removeDetail({{ $index }})" variant="danger" size="sm">Hapus</flux:button>
@@ -146,7 +146,7 @@
                     <flux:button variant="ghost">Batal</flux:button>
                 </flux:modal.close>
 
-                <flux:button type="submit" variant="primary">Simpan</flux:button>
+                <flux:button type="submit" variant="primary">Update</flux:button>
             </div>
         </form>
     </div>

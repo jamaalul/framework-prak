@@ -26,6 +26,11 @@ class Sidebar extends Component
             'KategoriKlinis' => ['Administrator'],
             'KodeTindakanTerapi' => ['Administrator'],
             'Pet' => ['Administrator', 'Resepsionis'],
+            'Pemilik' => ['Administrator'],
+            'Perawat' => ['Administrator'],
+            'Dokter' => ['Administrator'],
+            'RekamMedis' => ['Administrator', 'Dokter'],
+            'TemuDokter' => ['Administrator', 'Resepsionis'],
             'Role' => ['Administrator'],
             'User' => ['Administrator'],
         ];

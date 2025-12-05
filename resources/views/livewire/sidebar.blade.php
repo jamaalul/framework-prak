@@ -9,41 +9,85 @@
             <flux:sidebar.collapse
                 class="in-data-flux-sidebar-on-desktop:not-in-data-flux-sidebar-collapsed-desktop:-mr-2" />
         </flux:sidebar.header>
-
         <flux:sidebar.nav>
             <flux:sidebar.item icon="home" href="{{ route('dashboard') }}" :current="!$model">Home
             </flux:sidebar.item>
-            @if ($menuVisibility['JenisHewan'] ?? false)
-                <flux:sidebar.item icon="inbox" href="{{ route('dashboard', ['model' => 'JenisHewan']) }}"
-                    :current="$model === 'JenisHewan'">Jenis Hewan</flux:sidebar.item>
+
+            {{-- Master Data Group --}}
+            @if (($menuVisibility['KodeTindakanTerapi'] ?? false) || ($menuVisibility['JenisHewan'] ?? false) || ($menuVisibility['RasHewan'] ?? false) || 
+                 ($menuVisibility['Kategori'] ?? false) || ($menuVisibility['KategoriKlinis'] ?? false))
+                <flux:sidebar.group expandable heading="Master Data" class="grid">
+                    @if ($menuVisibility['JenisHewan'] ?? false)
+                        <flux:sidebar.item icon="inbox" href="{{ route('dashboard', ['model' => 'JenisHewan']) }}"
+                            :current="$model === 'JenisHewan'">Jenis Hewan</flux:sidebar.item>
+                    @endif
+                    @if ($menuVisibility['RasHewan'] ?? false)
+                        <flux:sidebar.item icon="globe-asia-australia" href="{{ route('dashboard', ['model' => 'RasHewan']) }}"
+                            :current="$model === 'RasHewan'">Ras Hewan</flux:sidebar.item>
+                    @endif
+                    @if ($menuVisibility['Kategori'] ?? false)
+                        <flux:sidebar.item icon="folder" href="{{ route('dashboard', ['model' => 'Kategori']) }}"
+                            :current="$model === 'Kategori'">Kategori</flux:sidebar.item>
+                    @endif
+                    @if ($menuVisibility['KategoriKlinis'] ?? false)
+                        <flux:sidebar.item icon="folder-plus" href="{{ route('dashboard', ['model' => 'KategoriKlinis']) }}"
+                            :current="$model === 'KategoriKlinis'">Kategori Klinis</flux:sidebar.item>
+                    @endif
+                    @if ($menuVisibility['KodeTindakanTerapi'] ?? false)
+                        <flux:sidebar.item icon="book-open" href="{{ route('dashboard', ['model' => 'KodeTindakanTerapi']) }}"
+                            :current="$model === 'KodeTindakanTerapi'">Kode Tindakan Terapi</flux:sidebar.item>
+                    @endif
+                </flux:sidebar.group>
             @endif
-            @if ($menuVisibility['RasHewan'] ?? false)
-                <flux:sidebar.item icon="globe-asia-australia" href="{{ route('dashboard', ['model' => 'RasHewan']) }}"
-                    :current="$model === 'RasHewan'">Ras Hewan</flux:sidebar.item>
+
+            {{-- Medical Operations Group --}}
+            @if (($menuVisibility['RekamMedis'] ?? false) || ($menuVisibility['TemuDokter'] ?? false))
+                <flux:sidebar.group expandable heading="Arsip Medis" class="grid">
+                    @if ($menuVisibility['RekamMedis'] ?? false)
+                        <flux:sidebar.item icon="clipboard-document-list" href="{{ route('dashboard', ['model' => 'RekamMedis']) }}"
+                            :current="$model === 'RekamMedis'">Rekam Medis</flux:sidebar.item>
+                    @endif
+                    @if ($menuVisibility['TemuDokter'] ?? false)
+                        <flux:sidebar.item icon="calendar" href="{{ route('dashboard', ['model' => 'TemuDokter']) }}"
+                            :current="$model === 'TemuDokter'">Temu Dokter</flux:sidebar.item>
+                    @endif
+                </flux:sidebar.group>
             @endif
-            @if ($menuVisibility['Kategori'] ?? false)
-                <flux:sidebar.item icon="folder" href="{{ route('dashboard', ['model' => 'Kategori']) }}"
-                    :current="$model === 'Kategori'">Kategori</flux:sidebar.item>
+
+            {{-- Client Management Group --}}
+            @if (($menuVisibility['Pet'] ?? false) || ($menuVisibility['Pemilik'] ?? false))
+                <flux:sidebar.group expandable heading="Manajemen Klien" class="grid">
+                    @if ($menuVisibility['Pet'] ?? false)
+                        <flux:sidebar.item icon="swatch" href="{{ route('dashboard', ['model' => 'Pet']) }}"
+                            :current="$model === 'Pet'">Pet</flux:sidebar.item>
+                    @endif
+                    @if ($menuVisibility['Pemilik'] ?? false)
+                        <flux:sidebar.item icon="user-group" href="{{ route('dashboard', ['model' => 'Pemilik']) }}"
+                            :current="$model === 'Pemilik'">Pemilik</flux:sidebar.item>
+                    @endif
+                </flux:sidebar.group>
             @endif
-            @if ($menuVisibility['KategoriKlinis'] ?? false)
-                <flux:sidebar.item icon="folder-plus" href="{{ route('dashboard', ['model' => 'KategoriKlinis']) }}"
-                    :current="$model === 'KategoriKlinis'">Kategori Klinis</flux:sidebar.item>
-            @endif
-            @if ($menuVisibility['KodeTindakanTerapi'] ?? false)
-                <flux:sidebar.item icon="book-open" href="{{ route('dashboard', ['model' => 'KodeTindakanTerapi']) }}"
-                    :current="$model === 'KodeTindakanTerapi'">Kode Tindakan Terapi</flux:sidebar.item>
-            @endif
-            @if ($menuVisibility['Pet'] ?? false)
-                <flux:sidebar.item icon="swatch" href="{{ route('dashboard', ['model' => 'Pet']) }}"
-                    :current="$model === 'Pet'">Pet</flux:sidebar.item>
-            @endif
-            @if ($menuVisibility['Role'] ?? false)
-                <flux:sidebar.item icon="identification" href="{{ route('dashboard', ['model' => 'Role']) }}"
-                    :current="$model === 'Role'">Role</flux:sidebar.item>
-            @endif
-            @if ($menuVisibility['User'] ?? false)
-                <flux:sidebar.item icon="user" href="{{ route('dashboard', ['model' => 'User']) }}"
-                    :current="$model === 'User'">User</flux:sidebar.item>
+
+            {{-- Administration Group --}}
+            @if (($menuVisibility['Role'] ?? false) || ($menuVisibility['User'] ?? false) || ($menuVisibility['Perawat'] ?? false) || ($menuVisibility['Dokter'] ?? false))
+                <flux:sidebar.group expandable heading="Administrasi" class="grid">
+                    @if ($menuVisibility['Role'] ?? false)
+                        <flux:sidebar.item icon="identification" href="{{ route('dashboard', ['model' => 'Role']) }}"
+                            :current="$model === 'Role'">Role</flux:sidebar.item>
+                    @endif
+                    @if ($menuVisibility['User'] ?? false)
+                        <flux:sidebar.item icon="user" href="{{ route('dashboard', ['model' => 'User']) }}"
+                            :current="$model === 'User'">User</flux:sidebar.item>
+                    @endif
+                    @if ($menuVisibility['Perawat'] ?? false)
+                        <flux:sidebar.item icon="user-circle" href="{{ route('dashboard', ['model' => 'Perawat']) }}"
+                            :current="$model === 'Perawat'">Perawat</flux:sidebar.item>
+                    @endif
+                    @if ($menuVisibility['Dokter'] ?? false)
+                        <flux:sidebar.item icon="academic-cap" href="{{ route('dashboard', ['model' => 'Dokter']) }}"
+                            :current="$model === 'Dokter'">Dokter</flux:sidebar.item>
+                    @endif
+                </flux:sidebar.group>
             @endif
         </flux:sidebar.nav>
 
