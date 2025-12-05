@@ -13,7 +13,14 @@ class DashboardController extends Controller
     {
         $userWithRoles = User::with('role')->find(Auth::id());
 
-        $modelName = $request->get('model', 'JenisHewan');
+        // If no model is specified, show welcome dashboard
+        if (!$request->has('model')) {
+            return view('dashboard.welcome', [
+                'user' => $userWithRoles
+            ]);
+        }
+
+        $modelName = $request->get('model');
         $modelClass = "App\\Models\\{$modelName}";
 
         $relationships = [];
